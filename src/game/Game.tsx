@@ -1,6 +1,8 @@
 import React from "react";
 import Board from "../board/Board";
 import Figure from "../figure/Figure";
+import MoveDialog from "../move/MoveDialog";
+import PlayerInfo from "../player/PlayerInfo";
 
 interface GameProps {
 
@@ -13,15 +15,34 @@ interface GameState {
 export default class Game extends React.Component<GameProps, GameState> {
     state = {
         station: 0
+
+    }
+
+    onStationClicked = (n: number) => {
+
     }
 
     render() {
         return (
             <div className={"Game"}>
-                <Board onStationClicked={(n) => this.setState({station: n})}/>
+                <Board onStationClicked={this.onStationClicked}/>
                 <Figure stationNumber={this.state.station} color={"orange"}/>
                 <Figure stationNumber={126} color={"blue"}/>
+                <MoveDialog targetStation={0} onTicketSelect={(move) => {}} playerInfo={playerInfo}/>
             </div>
         );
+    }
+}
+
+const playerInfo: PlayerInfo = {
+    name     : "Jan",
+    station  : 1,
+    color    : "red",
+    isMisterX: true,
+    tickets  : {
+        taxi : 4,
+        bus  : 0,
+        train: 2,
+        black: 1
     }
 }
