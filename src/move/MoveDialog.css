@@ -1,0 +1,44 @@
+.MoveDialog {
+	background-color: rgba(20, 21, 24, 0.9);
+	height: 180px;
+	color: white;
+	font-family: monospace;
+	user-select: none;
+	padding: 10px;
+	border-radius: 5px;
+	border: solid 1px rgba(255, 255, 255, 0.62);
+}
+
+h1 {
+	text-align: center;
+}
+
+p {
+	font-size: 24px;
+	text-align: center;
+	margin: 15px;
+}
+
+.MoveDialogTickets {
+	display: flex;
+	justify-content: space-around;
+}
+
+.MoveDialogTicketButton {
+	width: 90px;
+	height: 45px;
+	background-color: transparent;
+	border: none;
+	background-repeat: no-repeat;
+	background-size: cover;
+
+}
+
+.MoveDialogTicketButton:active {
+	transform: scale(0.98);
+}
+
+.MoveDialogTicketButton:disabled {
+	opacity: 0.4;
+	filter: alpha(opacity=40);
+}
