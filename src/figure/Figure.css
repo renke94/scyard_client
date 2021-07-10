@@ -1,0 +1,48 @@
+.Figure {
+	position: absolute;
+	width: 35px;
+	height: 60px;
+	user-select: none;
+	transform: translate(-3px, -30px);
+}
+
+.PlayerInfo {
+	background-color: rgba(20, 21, 24, 0.9);
+	width: 180px;
+	height: 80px;
+	color: white;
+	font-family: monospace;
+	user-select: none;
+	padding: 10px;
+	border-radius: 5px;
+	border: solid 1px rgba(255, 255, 255, 0.62);
+}
+
+.PlayerInfoPadding {
+	position: absolute;
+	width: 260px;
+	height: 160px;
+	z-index: 4;
+	transform: translate(-116px, -170px);
+	font-family: monospace;
+	user-select: none;
+	padding: 30px;
+}
+
+.FigurePlayerName {
+	font-size: 22px;
+	text-align: center;
+	height: 30%;
+}
+
+.FigurePlayerTickets {
+	width: 100%;
+	display: flex;
+	justify-content: space-around;
+}
+
+.FigurePlayerTicketsAmount {
+	text-align: center;
+	font-size: large;
+	margin: 5px;
+}

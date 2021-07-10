@@ -1,0 +1,12 @@
+.Lobby {
+	display: flex;
+	flex-direction: column;
+	padding: 20px;
+	width: 90%;
+	max-width: 300px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	border: black solid 1px;
+}

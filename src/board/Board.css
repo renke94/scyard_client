@@ -1,0 +1,15 @@
+.Station {
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	padding: 0;
+	color: white;
+	background-color: rgba(0, 0, 0, 0.64);
+	border-width: 1px;
+	user-select: none;
+}
+
+.Station:active {
+	outline: none;
+}
