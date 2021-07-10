@@ -13,7 +13,10 @@ export default class MoveDialog extends React.Component<MoveDialogProps, any> {
     render() {
         return (
             <div className={"MoveDialog"} style={{width: this.props.playerInfo.isMisterX ? 480 : 360}}>
-                <h1>Choose Ticket</h1>
+                <div className={"MoveDialogHeader"}>
+                    <h1>Choose Ticket</h1>
+                    <button className={"MoveDialogCloseButton"}>&#215;</button>
+                </div>
                 <div className={"MoveDialogTickets"}>
                     <div>
                         <p>{this.props.playerInfo.tickets.taxi}</p>
