@@ -1,6 +1,7 @@
 import React from "react";
 import {coordinates} from "../board/Coordinates";
 import "./Figure.css";
+import {BoardMeasurements} from "../board/Board";
 
 const colors = new Map<string, string>([
     ["black" , "/figure_black.png"],
@@ -14,15 +15,18 @@ const colors = new Map<string, string>([
 ]);
 
 interface FigureProps {
-    stationNumber: number
-    color: string
+    stationNumber : number;
+    color         : string;
+    sizeInPercent : number;
 }
 
 interface FigureState {
-    mouseOver: boolean
+    mouseOver: boolean;
 }
 
 export default class Figure extends React.Component<FigureProps, FigureState> {
+    boardMeasurements = new BoardMeasurements(this.props.sizeInPercent);
+
     state = {
         mouseOver: false
     }
@@ -36,15 +40,15 @@ export default class Figure extends React.Component<FigureProps, FigureState> {
                 {this.state.mouseOver && <div
                     className={"PlayerInfoPadding"}
                     style={{
-                        left: coordinates[this.props.stationNumber][0] - 330,
-                        top: coordinates[this.props.stationNumber][1],
+                        left: this.boardMeasurements.width  * coordinates[this.props.stationNumber][0],
+                        top : this.boardMeasurements.height * coordinates[this.props.stationNumber][1],
                     }}
                 >
 	                <div className={"PlayerInfo"}>
 		                <div className={"FigurePlayerName"}>Jan</div>
 		                <div className={"FigurePlayerTickets"}>
-                            <div><p className={"FigurePlayerTicketsAmount"}>0</p><img src="/ticket_taxi.png" alt=""  width={50}/></div>
-                            <div><p className={"FigurePlayerTicketsAmount"}>0</p><img src="/ticket_bus.png" alt=""   width={50}/></div>
+                            <div><p className={"FigurePlayerTicketsAmount"}>0</p><img src="/ticket_taxi.png"  alt="" width={50}/></div>
+                            <div><p className={"FigurePlayerTicketsAmount"}>0</p><img src="/ticket_bus.png"   alt="" width={50}/></div>
                             <div><p className={"FigurePlayerTicketsAmount"}>0</p><img src="/ticket_train.png" alt="" width={50}/></div>
 		                </div>
 	                </div>
@@ -54,8 +58,8 @@ export default class Figure extends React.Component<FigureProps, FigureState> {
                     src={colors.get(this.props.color)}
                     alt=""
                     style={{
-                        left: coordinates[this.props.stationNumber][0] - 330,
-                        top: coordinates[this.props.stationNumber][1]
+                        left: this.boardMeasurements.width  * coordinates[this.props.stationNumber][0],
+                        top : this.boardMeasurements.height * coordinates[this.props.stationNumber][1]
                     }}/>
             </div>
         );

@@ -6,8 +6,13 @@
 	padding: 0;
 	color: white;
 	background-color: rgba(0, 0, 0, 0.64);
-	border-width: 1px;
+	border: 1px inset;
 	user-select: none;
+	margin: 0;
+}
+
+.Station:hover {
+	background-color: rgba(33, 33, 33, 0.64);
 }
 
 .Station:active {
