@@ -1,7 +1,7 @@
 import React from "react";
 import Move from "./Move";
-import PlayerInfo from "../player/PlayerInfo";
 import './MoveDialog.css';
+import {PlayerInfo} from "../gamesocket/GameSocket";
 
 interface MoveDialogProps {
     targetStation : number;
@@ -20,7 +20,7 @@ export default class MoveDialog extends React.Component<MoveDialogProps, any> {
 
     render() {
         return (
-            <div className={"MoveDialog"} style={{width: this.props.playerInfo.isMisterX ? 480 : 360}}>
+            <div className={"MoveDialog"} style={{width: this.props.playerInfo.tickets.black > 0 ? 480 : 360}}>
                 <div className={"MoveDialogHeader"}>
                     <h1>Choose Ticket</h1>
                     <button className={"MoveDialogCloseButton"}>&#215;</button>
@@ -53,7 +53,7 @@ export default class MoveDialog extends React.Component<MoveDialogProps, any> {
                             onClick={(e) => this.onTicketSelected("train")}
                         />
                     </div>
-                    {this.props.playerInfo.isMisterX && <div>
+                    {this.props.playerInfo.tickets.black > 0 && <div>
                         <p>{this.props.playerInfo.tickets.black}</p>
                         <button
 	                        disabled={this.props.playerInfo.tickets.black <= 0}

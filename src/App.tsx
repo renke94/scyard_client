@@ -1,10 +1,10 @@
 import React from 'react';
-import {
+/*import {
     BrowserRouter as Router,
     Switch,
     Route,
     Link
-} from "react-router-dom";
+} from "react-router-dom";*/
 
 import './App.css';
 import Login from "./login/Login";
@@ -28,6 +28,7 @@ class App extends React.Component<any, AppState> {
         });
 
         socket.onDisconnect((ev: CloseEvent) => {
+            console.log(ev.reason)
             this.setState({socket: undefined});
         });
     }

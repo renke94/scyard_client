@@ -1,5 +1,6 @@
 import Player from "../player/Player";
 import Move from "../move/Move";
+import {inspect} from "util";
 
 export default class GameSocket {
     private socket: WebSocket;
@@ -10,6 +11,8 @@ export default class GameSocket {
     private playersUpdatedActions: Array<(e: PlayersUpdatedEvent) => void> = [];
     private youAreHostActions: Array<(e: YouAreHostEvent) => void> = [];
     private gameStartedActions: Array<(e: GameStartedEvent) => void> = [];
+    private gameReadyStateActions: Array<(e: GameReadyStateChangedEvent) => void> = [];
+    private misterXUpdateActions: Array<(e: MisterXUpdatedEvent) => void> = [];
 
     private playersUpdated = (data: any) => {
         const event = new PlayersUpdatedEvent(data);
@@ -22,8 +25,18 @@ export default class GameSocket {
     }
 
     private gameStarted = (data: any) => {
-        const event = new GameStartedEvent();
+        const event = new GameStartedEvent(data);
         this.gameStartedActions.forEach(action => action(event));
+    }
+
+    private gameReadyStateChanged = (data: any) => {
+        const event = new GameReadyStateChangedEvent(data);
+        this.gameReadyStateActions.forEach(action => action(event));
+    }
+
+    private updateMisterX = (data: any) => {
+        const event = new MisterXUpdatedEvent(data);
+        this.misterXUpdateActions.forEach(action => action(event));
     }
 
     /**
@@ -33,6 +46,8 @@ export default class GameSocket {
         ["playersUpdate", this.playersUpdated],
         ["youAreHost", this.hostChanged],
         ["gameStarted", this.gameStarted],
+        ["gameReadyStateChanged", this.gameReadyStateChanged],
+        ["updateMisterX", this.updateMisterX],
     ]);
 
     constructor(name: string) {
@@ -71,7 +86,15 @@ export default class GameSocket {
     }
 
     onGameStarted(action: (e: GameStartedEvent) => void) {
-        this.gameStartedActions.push(action)
+        this.gameStartedActions.push(action);
+    }
+
+    onGameReadyStateChanged(action: (e: GameReadyStateChangedEvent) => void) {
+        this.gameReadyStateActions.push(action);
+    }
+
+    onMisterXUpdated(action: (e: MisterXUpdatedEvent) => void) {
+        this.misterXUpdateActions.push(action);
     }
 
     /**
@@ -99,6 +122,7 @@ export class Event {
 
     constructor(type: string) {
         this.type = type;
+        console.log(this.type);
     }
 }
 
@@ -107,7 +131,7 @@ export class PlayersUpdatedEvent extends Event {
 
     constructor(jsonObject: any) {
         super(jsonObject.type);
-        this.players = jsonObject.players.map((p: any) => new Player(p.name));
+        this.players = jsonObject.players.map((p: any) => new Player(p.name, p.uuid));
     }
 }
 
@@ -119,7 +143,7 @@ export class YouAreHostEvent extends Event {
 
 class StartGameEvent extends Event {
     constructor() {
-        super("startGame");
+        super("hostStartedTheGame");
     }
 }
 
@@ -132,8 +156,49 @@ class MoveEvent extends Event {
     }
 }
 
-export class GameStartedEvent extends Event {
-    constructor() {
-        super("gameStarted");
+export class GameReadyStateChangedEvent extends Event {
+    isReady: Boolean;
+
+    constructor(jsonObject: any) {
+        super("gameReadyStateChanged");
+        this.isReady = jsonObject.isReady;
     }
+}
+
+export class GameStartedEvent extends Event {
+    gameInfo : GameInfo;
+
+    constructor(jsonObject: any) {
+        super("gameStarted");
+        this.gameInfo = jsonObject.gameInfo;
+    }
+}
+
+export class MisterXUpdatedEvent extends Event {
+    playerInfo : PlayerInfo;
+
+    constructor(jsonObject: any) {
+        super("updateMisterX");
+        this.playerInfo = jsonObject.playerInfo;
+    }
+}
+
+export interface Tickets {
+    taxi  : number;
+    bus   : number;
+    train : number;
+    black : number;
+}
+
+export interface PlayerInfo {
+    player  : Player;
+    tickets : Tickets;
+    station : number;
+    color   : string;
+}
+
+export interface GameInfo {
+    detectives: Array<PlayerInfo>;
+    misterX: Player;
+    misterXLastSeen: string;
 }

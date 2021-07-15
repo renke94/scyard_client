@@ -1,52 +1,50 @@
 import React from "react";
 import Board from "../board/Board";
+import GameSocket, {GameInfo, MisterXUpdatedEvent, PlayerInfo} from "../gamesocket/GameSocket";
 import Figure from "../figure/Figure";
-import MoveDialog from "../move/MoveDialog";
-import PlayerInfo from "../player/PlayerInfo";
-import GameSocket from "../gamesocket/GameSocket";
 
 interface GameProps {
     socket: GameSocket;
+    gameInfo: GameInfo;
+    misterXInfo: PlayerInfo | undefined;
 }
 
 interface GameState {
-    station: number;
+    gameInfo: GameInfo;
+    misterXInfo: PlayerInfo | undefined;
 }
 
 export default class Game extends React.Component<GameProps, GameState> {
-    state = {
-        station: 0
+    constructor(props: GameProps) {
+        super(props);
 
+        this.state = {
+            gameInfo: this.props.gameInfo,
+            misterXInfo: this.props.misterXInfo,
+        }
+    }
+
+    componentDidMount() {
+        this.props.socket.onMisterXUpdated((e: MisterXUpdatedEvent) => {
+            this.setState({misterXInfo: e.playerInfo});
+        });
     }
 
     onStationClicked = (n: number) => {
-        this.setState({station: n});
+
     }
 
     render() {
         return (
             <div className={"Game"}>
                 <Board onStationClicked={this.onStationClicked} sizeInPercent={60}/>
-                <Figure stationNumber={this.state.station} color={"orange"} sizeInPercent={60}/>
-                <Figure stationNumber={126} color={"blue"} sizeInPercent={60}/>
-                <MoveDialog
+                {this.state.gameInfo.detectives.map((p) => <Figure playerInfo={p} sizeInPercent={60}/>)}
+                {this.state.misterXInfo && <Figure playerInfo={this.state.misterXInfo} sizeInPercent={60}/>}
+                {/*<MoveDialog
                     targetStation={0}
                     onTicketSelect={(move) => this.props.socket.sendMove(move)}
-                    playerInfo={playerInfo}/>
+                    playerInfo={playerInfo}/>*/}
             </div>
         );
-    }
-}
-
-const playerInfo: PlayerInfo = {
-    name     : "Jan",
-    station  : 1,
-    color    : "red",
-    isMisterX: true,
-    tickets  : {
-        taxi : 4,
-        bus  : 0,
-        train: 2,
-        black: 1
     }
 }
