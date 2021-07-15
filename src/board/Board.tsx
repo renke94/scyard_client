@@ -14,7 +14,7 @@ interface BoardState {
 /** Measurements for the game board
  *
  */
-class BoardMeasurements {
+export class BoardMeasurements {
     sizeInPercent : number; // Maybe not needed after the initial calculation
     width         : number;
     height        : number;

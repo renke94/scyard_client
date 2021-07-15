@@ -19,15 +19,15 @@ export default class Game extends React.Component<GameProps, GameState> {
     }
 
     onStationClicked = (n: number) => {
-
+        this.setState({station: n});
     }
 
     render() {
         return (
             <div className={"Game"}>
-                <Board onStationClicked={(n) => console.log(n)} sizeInPercent={60}/>
-                <Figure stationNumber={80} color={"orange"}/>
-                <Figure stationNumber={126} color={"blue"}/>
+                <Board onStationClicked={this.onStationClicked} sizeInPercent={60}/>
+                <Figure stationNumber={this.state.station} color={"orange"} sizeInPercent={60}/>
+                <Figure stationNumber={126} color={"blue"} sizeInPercent={60}/>
                 <MoveDialog targetStation={0} onTicketSelect={(move) => {}} playerInfo={playerInfo}/>
             </div>
         );
