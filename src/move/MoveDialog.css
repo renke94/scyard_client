@@ -39,7 +39,7 @@ p {
 }
 
 .MoveDialogTicketButton:active:hover:enabled {
-	transform: scale(0.98);
+	transform: scale(0.96);
 }
 
 .MoveDialogTicketButton:disabled {
@@ -48,7 +48,6 @@ p {
 }
 
 .MoveDialogTicketButton:hover:enabled {
-	transform: translate(0, -5px);
 	transition-duration: 100ms;
 	-webkit-box-shadow: 0 0 10px 0 #FFFFFF;
 	box-shadow:         0 0 10px 0 #FFFFFF;

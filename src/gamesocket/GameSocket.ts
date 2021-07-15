@@ -1,4 +1,5 @@
 import Player from "../player/Player";
+import Move from "../move/Move";
 
 export default class GameSocket {
     private socket: WebSocket;
@@ -8,6 +9,7 @@ export default class GameSocket {
      */
     private playersUpdatedActions: Array<(e: PlayersUpdatedEvent) => void> = [];
     private youAreHostActions: Array<(e: YouAreHostEvent) => void> = [];
+    private gameStartedActions: Array<(e: GameStartedEvent) => void> = [];
 
     private playersUpdated = (data: any) => {
         const event = new PlayersUpdatedEvent(data);
@@ -19,16 +21,22 @@ export default class GameSocket {
         this.youAreHostActions.forEach(action => action(event));
     }
 
+    private gameStarted = (data: any) => {
+        const event = new GameStartedEvent();
+        this.gameStartedActions.forEach(action => action(event));
+    }
+
     /**
      * The eventMapper determines the type of the incoming event.
      */
     private eventMapper = new Map([
         ["playersUpdate", this.playersUpdated],
-        ["youAreHost", this.hostChanged]
+        ["youAreHost", this.hostChanged],
+        ["gameStarted", this.gameStarted],
     ]);
 
-    constructor(socket: WebSocket) {
-        this.socket = socket;
+    constructor(name: string) {
+        this.socket = new WebSocket(`ws://localhost:7000/${name}`);
         this.socket.onmessage = (e: MessageEvent) => {
             const data = JSON.parse(e.data);
             const action = this.eventMapper.get(data.type);
@@ -54,6 +62,18 @@ export default class GameSocket {
         this.youAreHostActions.push(action);
     }
 
+    onConnect(action: (e: Event) => void) {
+        this.socket.onopen = action;
+    }
+
+    onDisconnect(action: (e: CloseEvent) => void) {
+        this.socket.onclose = action;
+    }
+
+    onGameStarted(action: (e: GameStartedEvent) => void) {
+        this.gameStartedActions.push(action)
+    }
+
     /**
      * Commands:
      */
@@ -63,6 +83,14 @@ export default class GameSocket {
 
     startGame = () => {
         this.sendEvent(new StartGameEvent());
+    }
+
+    sendMove = (move: Move) => {
+        this.sendEvent(new MoveEvent(move));
+    }
+
+    disconnect = () => {
+        this.socket.close();
     }
 }
 
@@ -92,5 +120,20 @@ export class YouAreHostEvent extends Event {
 class StartGameEvent extends Event {
     constructor() {
         super("startGame");
+    }
+}
+
+class MoveEvent extends Event {
+    move: Move;
+
+    constructor(move: Move) {
+        super("moveEvent");
+        this.move = move;
+    }
+}
+
+export class GameStartedEvent extends Event {
+    constructor() {
+        super("gameStarted");
     }
 }

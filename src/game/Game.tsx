@@ -3,9 +3,10 @@ import Board from "../board/Board";
 import Figure from "../figure/Figure";
 import MoveDialog from "../move/MoveDialog";
 import PlayerInfo from "../player/PlayerInfo";
+import GameSocket from "../gamesocket/GameSocket";
 
 interface GameProps {
-
+    socket: GameSocket;
 }
 
 interface GameState {
@@ -28,7 +29,10 @@ export default class Game extends React.Component<GameProps, GameState> {
                 <Board onStationClicked={this.onStationClicked} sizeInPercent={60}/>
                 <Figure stationNumber={this.state.station} color={"orange"} sizeInPercent={60}/>
                 <Figure stationNumber={126} color={"blue"} sizeInPercent={60}/>
-                <MoveDialog targetStation={0} onTicketSelect={(move) => {}} playerInfo={playerInfo}/>
+                <MoveDialog
+                    targetStation={0}
+                    onTicketSelect={(move) => this.props.socket.sendMove(move)}
+                    playerInfo={playerInfo}/>
             </div>
         );
     }

@@ -47,8 +47,8 @@ export default class Figure extends React.Component<FigureProps, FigureState> {
 	                <div className={"PlayerInfo"}>
 		                <div className={"FigurePlayerName"}>Jan</div>
 		                <div className={"FigurePlayerTickets"}>
-                            <div><p className={"FigurePlayerTicketsAmount"}>0</p><img src="/ticket_taxi.png" alt=""  width={50}/></div>
-                            <div><p className={"FigurePlayerTicketsAmount"}>0</p><img src="/ticket_bus.png" alt=""   width={50}/></div>
+                            <div><p className={"FigurePlayerTicketsAmount"}>0</p><img src="/ticket_taxi.png"  alt="" width={50}/></div>
+                            <div><p className={"FigurePlayerTicketsAmount"}>0</p><img src="/ticket_bus.png"   alt="" width={50}/></div>
                             <div><p className={"FigurePlayerTicketsAmount"}>0</p><img src="/ticket_train.png" alt="" width={50}/></div>
 		                </div>
 	                </div>

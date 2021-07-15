@@ -1,44 +1,48 @@
 import React from 'react';
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link
+} from "react-router-dom";
+
 import './App.css';
 import Login from "./login/Login";
 import Lobby from "./Lobby/Lobby";
+import GameSocket from "./gamesocket/GameSocket";
 
 interface AppState {
-    socket: WebSocket | undefined;
+    socket: GameSocket | undefined;
 }
 
 class App extends React.Component<any, AppState> {
     state = {
         socket: undefined
-    };
+    }
 
     onLogin = (name: string) => {
-        const socket = new WebSocket(`ws://localhost:7000/${name}`);
-        this.socketEvents(socket);
+        const socket = new GameSocket(name);
+
+        socket.onConnect((e) => {
+            this.setState({socket: socket});
+        });
+
+        socket.onDisconnect((ev: CloseEvent) => {
+            this.setState({socket: undefined});
+        });
     }
 
     onLogout = () => {
-        const socket: WebSocket = this.state.socket!!;
-        socket.close();
-    }
-
-    socketEvents = (socket: WebSocket) => {
-        socket.onopen = (ev: Event) => {
-            this.setState({socket: socket});
-        };
-
-        socket.onclose = (ev: CloseEvent) => {
-            this.setState({socket: undefined});
-        };
+        const socket: GameSocket = this.state.socket!!;
+        socket.disconnect();
     }
 
     render() {
-        return this.state.socket
-            ? <div>
-                <button onClick={this.onLogout}>Logout</button>
-                <Lobby socket={this.state.socket!!}/>
-            </div>
-            : <Login onLogin={this.onLogin}/>;
+        return <div>
+            {this.state.socket ?
+                <Lobby socket={this.state.socket!} onLogout={this.onLogout}/> :
+                <Login onLogin={this.onLogin}/>}
+        </div>;
     }
 }
 

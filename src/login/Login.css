@@ -9,6 +9,8 @@
 	left: 50%;
 	transform: translate(-50%, -50%);
 	border: black solid 1px;
+	border-radius: 5px;
+	border: rgba(255, 255, 255, 0.43) solid 1px;
 }
 
 .LoginInput {
