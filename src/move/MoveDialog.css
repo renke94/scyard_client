@@ -8,6 +8,17 @@
 	border-radius: 5px;
 	border: solid 1px rgba(255, 255, 255, 0.62);
 	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.MoveDialogContainer {
+	width: 100%;
+	height: 100%;
+	background-color: rgba(40, 44, 52, 0.46);
+	position: absolute;
+	z-index: 4;
 }
 
 h1 {
@@ -34,7 +45,7 @@ p {
 	border: none;
 	background-repeat: no-repeat;
 	background-size: cover;
-	transition-duration: 100ms;
+	/*transition-duration: 100ms;*/
 
 }
 
@@ -48,7 +59,7 @@ p {
 }
 
 .MoveDialogTicketButton:hover:enabled {
-	transition-duration: 100ms;
+	/*transition-duration: 100ms;*/
 	-webkit-box-shadow: 0 0 10px 0 #FFFFFF;
 	box-shadow:         0 0 10px 0 #FFFFFF;
 }

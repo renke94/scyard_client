@@ -2,10 +2,10 @@ import React from 'react';
 import './Lobby.css';
 import Player from "../player/Player";
 import GameSocket, {
-    GameInfo,
     GameReadyStateChangedEvent,
-    GameStartedEvent, MisterXUpdatedEvent, PlayerInfo,
+    PlayerInfo,
     PlayersUpdatedEvent,
+    PlayerUpdatedEvent, SelfInfo, SelfUpdatedEvent,
     YouAreHostEvent
 } from "../gamesocket/GameSocket";
 import Game from "../game/Game";
@@ -16,11 +16,11 @@ interface LobbyProps {
 }
 
 interface LobbyState {
-    players: Array<Player>;
+    playersList: Array<Player>;
     host: Boolean;
     isReady: Boolean;
-    gameInfo: GameInfo | undefined;
-    misterXInfo: PlayerInfo | undefined;
+    selfInfo: SelfInfo | undefined;
+    players: Map<string, PlayerInfo>;
 }
 
 export default class Lobby extends React.Component<LobbyProps, LobbyState> {
@@ -28,11 +28,11 @@ export default class Lobby extends React.Component<LobbyProps, LobbyState> {
         super(props);
 
         this.state = {
-            players: [],
+            playersList: [],
             host: false,
             isReady: false,
-            gameInfo: undefined,
-            misterXInfo: undefined
+            selfInfo: undefined,
+            players: new Map<string, PlayerInfo>(),
         }
     }
 
@@ -42,36 +42,46 @@ export default class Lobby extends React.Component<LobbyProps, LobbyState> {
 
     socketEvents = (socket: GameSocket) => {
         socket.onPlayersUpdated((e: PlayersUpdatedEvent) => {
-            this.setState({players: e.players});
+            this.setState({playersList: e.players});
         })
 
         socket.onYouAreHost((e: YouAreHostEvent) => {
             this.setState({host: true});
         })
 
-        socket.onGameStarted((e: GameStartedEvent) => {
-            this.setState({gameInfo: e.gameInfo});
-        })
-
         socket.onGameReadyStateChanged((e: GameReadyStateChangedEvent) => {
             this.setState({isReady: e.isReady});
         })
 
-        socket.onMisterXUpdated((e: MisterXUpdatedEvent) => {
-            this.setState({misterXInfo: e.playerInfo});
-        })
+        socket.onPlayerUpdated((e: PlayerUpdatedEvent) => {
+            const players = this.state.players;
+            players.set(e.playerInfo.player.uuid, e.playerInfo);
+            this.setState({players: players});
+        });
+
+        socket.onSelfUpdated((e: SelfUpdatedEvent) => {
+            this.setState({ selfInfo: e.selfInfo });
+        });
     }
 
     render() {
         return <div>
-            {this.state.gameInfo ?
-                <Game socket={this.props.socket} gameInfo={this.state.gameInfo} misterXInfo={this.state.misterXInfo}/> :
+            {this.state.selfInfo ?
+                <Game
+                    socket={this.props.socket}
+                    selfInfo={this.state.selfInfo}
+                    players={this.state.players}
+                /> :
                 <div className={"Lobby"}>
                     <h1>Lobby</h1>
                     <h2>Spieler</h2>
-                    <ul>{this.state.players.map((p: Player, idx: number) => <li key={idx}>{p.name}</li>)}</ul>
-                    <button disabled={!this.state.host || !this.state.isReady}
-                            onClick={this.props.socket.startGame}>Spiel starten</button>
+                    <ul>
+                        {this.state.playersList.map((p: Player, idx: number) => <li key={idx}>{p.name}</li>)}
+                    </ul>
+                    <button
+                        disabled={!this.state.host || !this.state.isReady}
+                        onClick={this.props.socket.startGame}
+                    >Spiel starten</button>
                     <button onClick={this.props.onLogout}>Logout</button>
                 </div>}
         </div>;

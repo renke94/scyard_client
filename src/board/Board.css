@@ -9,12 +9,34 @@
 	border: 1px inset;
 	user-select: none;
 	margin: 0;
+	transform: translate(-50%, -50%);
 }
 
-.Station:hover {
+.Station:hover:enabled {
 	background-color: rgba(33, 33, 33, 0.64);
 }
 
-.Station:active {
+
+.Station:focus {
 	outline: none;
+}
+
+.Station:active {
+	transform: translate(-50%, -50%) scale(0.97);
+}
+
+.Board {
+	position: absolute;
+	width:  70vw;
+	height: 50vw;
+}
+
+.BoardBackground {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+.Fig {
+	position: absolute;
 }

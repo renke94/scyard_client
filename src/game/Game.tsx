@@ -1,17 +1,19 @@
 import React from "react";
 import Board from "../board/Board";
-import GameSocket, {GameInfo, MisterXUpdatedEvent, PlayerInfo} from "../gamesocket/GameSocket";
+import MoveDialog from "../move/MoveDialog";
+import GameSocket, {PlayerInfo, SelfInfo, Tickets} from "../gamesocket/GameSocket";
 import Figure from "../figure/Figure";
+import Move from "../move/Move";
 
 interface GameProps {
     socket: GameSocket;
-    gameInfo: GameInfo;
-    misterXInfo: PlayerInfo | undefined;
+    selfInfo: SelfInfo;
+    players: Map<string, PlayerInfo>;
 }
 
 interface GameState {
-    gameInfo: GameInfo;
-    misterXInfo: PlayerInfo | undefined;
+    showMoveDialog: Boolean;
+    targetStation: number;
 }
 
 export default class Game extends React.Component<GameProps, GameState> {
@@ -19,31 +21,59 @@ export default class Game extends React.Component<GameProps, GameState> {
         super(props);
 
         this.state = {
-            gameInfo: this.props.gameInfo,
-            misterXInfo: this.props.misterXInfo,
+            showMoveDialog: false,
+            targetStation: 0,
         }
     }
 
-    componentDidMount() {
-        this.props.socket.onMisterXUpdated((e: MisterXUpdatedEvent) => {
-            this.setState({misterXInfo: e.playerInfo});
+    onStationClicked = (n: number) => {
+        this.setState({
+            showMoveDialog: true,
+            targetStation: n
         });
     }
 
-    onStationClicked = (n: number) => {
+    onTicketSelected = (ticket: string) => {
+        const move: Move = {
+            targetStation: this.state.targetStation,
+            ticket       : ticket,
+        };
+        this.props.socket.sendMove(move);
+        this.setState({showMoveDialog: false});
+    }
 
+    reachableStations = (selfInfo: SelfInfo) => {
+        const reachableStations = selfInfo.reachableStations;
+        const tickets: Tickets = selfInfo.tickets;
+
+        const stations: Set<number> = new Set<number>();
+
+        if (tickets.TAXI  > 0) reachableStations.TAXI.forEach((v) => stations.add(v));
+        if (tickets.BUS   > 0) reachableStations.BUS.forEach((v) => stations.add(v));
+        if (tickets.TRAIN > 0) reachableStations.TRAIN.forEach((v) => stations.add(v));
+        if (tickets.BLACK > 0) reachableStations.BLACK.forEach((v) => stations.add(v));
+
+        return stations
     }
 
     render() {
         return (
             <div className={"Game"}>
-                <Board onStationClicked={this.onStationClicked} sizeInPercent={60}/>
-                {this.state.gameInfo.detectives.map((p) => <Figure playerInfo={p} sizeInPercent={60}/>)}
-                {this.state.misterXInfo && <Figure playerInfo={this.state.misterXInfo} sizeInPercent={60}/>}
-                {/*<MoveDialog
-                    targetStation={0}
-                    onTicketSelect={(move) => this.props.socket.sendMove(move)}
-                    playerInfo={playerInfo}/>*/}
+                <Board
+                    onStationClicked={this.onStationClicked}
+                    reachableStations={this.reachableStations(this.props.selfInfo)}>
+
+                    {Array.from(this.props.players).map((e, idx) =>
+                        <Figure playerInfo={e[1]} key={idx}/>
+                    )}
+
+                    {this.props.selfInfo && <Figure playerInfo={this.props.selfInfo}/>}
+                    {this.state.showMoveDialog && <MoveDialog
+                        targetStation={0}
+                        onTicketSelected={this.onTicketSelected}
+                        onClose={() => this.setState({showMoveDialog: false})}
+                        playerInfo={this.props.selfInfo}/>}
+                </Board>
             </div>
         );
     }

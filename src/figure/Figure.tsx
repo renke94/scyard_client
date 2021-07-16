@@ -1,7 +1,6 @@
 import React from "react";
 import {coordinates} from "../board/Coordinates";
 import "./Figure.css";
-import {BoardMeasurements} from "../board/Board";
 import {PlayerInfo} from "../gamesocket/GameSocket";
 
 const colors = new Map<string, string>([
@@ -17,7 +16,6 @@ const colors = new Map<string, string>([
 
 interface FigureProps {
     playerInfo    : PlayerInfo;
-    sizeInPercent : number;
 }
 
 interface FigureState {
@@ -25,8 +23,6 @@ interface FigureState {
 }
 
 export default class Figure extends React.Component<FigureProps, FigureState> {
-    boardMeasurements = new BoardMeasurements(this.props.sizeInPercent);
-
     state = {
         mouseOver: false
     }
@@ -40,16 +36,25 @@ export default class Figure extends React.Component<FigureProps, FigureState> {
                 {this.state.mouseOver && <div
                     className={"PlayerInfoPadding"}
                     style={{
-                        left: this.boardMeasurements.width  * coordinates[this.props.playerInfo.station][0],
-                        top : this.boardMeasurements.height * coordinates[this.props.playerInfo.station][1],
+                        left: `${coordinates[this.props.playerInfo.station][0] * 100}%`,
+                        top : `${coordinates[this.props.playerInfo.station][1] * 100}%`,
                     }}
                 >
 	                <div className={"PlayerInfo"}>
-		                <div className={"FigurePlayerName"}>Jan</div>
+		                <div className={"FigurePlayerName"}>{this.props.playerInfo.player.name}</div>
 		                <div className={"FigurePlayerTickets"}>
-                            <div><p className={"FigurePlayerTicketsAmount"}>0</p><img src="/ticket_taxi.png"  alt="" width={50}/></div>
-                            <div><p className={"FigurePlayerTicketsAmount"}>0</p><img src="/ticket_bus.png"   alt="" width={50}/></div>
-                            <div><p className={"FigurePlayerTicketsAmount"}>0</p><img src="/ticket_train.png" alt="" width={50}/></div>
+                            <div>
+                                <p className={"FigurePlayerTicketsAmount"}>{this.props.playerInfo.tickets.TAXI}</p>
+                                <img src="/ticket_taxi.png"  alt="" width={50}/>
+                            </div>
+                            <div>
+                                <p className={"FigurePlayerTicketsAmount"}>{this.props.playerInfo.tickets.BUS}</p>
+                                <img src="/ticket_bus.png"   alt="" width={50}/>
+                            </div>
+                            <div>
+                                <p className={"FigurePlayerTicketsAmount"}>{this.props.playerInfo.tickets.BLACK}</p>
+                                <img src="/ticket_train.png" alt="" width={50}/>
+                            </div>
 		                </div>
 	                </div>
                 </div>}
@@ -58,8 +63,8 @@ export default class Figure extends React.Component<FigureProps, FigureState> {
                     src={colors.get(this.props.playerInfo.color)}
                     alt=""
                     style={{
-                        left: this.boardMeasurements.width  * coordinates[this.props.playerInfo.station][0],
-                        top : this.boardMeasurements.height * coordinates[this.props.playerInfo.station][1]
+                        left: `${coordinates[this.props.playerInfo.station][0] * 100}%`,
+                        top : `${coordinates[this.props.playerInfo.station][1] * 100}%`
                     }}/>
             </div>
         );

@@ -3,7 +3,8 @@
 	width: 35px;
 	height: 60px;
 	user-select: none;
-	transform: translate(-3px, -30px);
+	transform: translate(-50%, -45px);
+	z-index: 3;
 }
 
 .PlayerInfo {
@@ -22,8 +23,8 @@
 	position: absolute;
 	width: 260px;
 	height: 160px;
-	z-index: 4;
-	transform: translate(-116px, -170px);
+	z-index: 3;
+	transform: translate(-40%, -200px);
 	font-family: monospace;
 	user-select: none;
 	padding: 30px;
