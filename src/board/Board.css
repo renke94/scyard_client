@@ -12,10 +12,21 @@
 	transform: translate(-50%, -50%);
 }
 
+.StationBus {
+	-webkit-box-shadow: -3px -3px 3px #4EFF48;
+}
+
+.StationTrain {
+	-webkit-box-shadow: 2px 2px 3px #FF02A7
+}
+
+.StationBusTrain {
+	-webkit-box-shadow: 2px 2px 3px #FF02A7, -3px -3px 3px #4EFF48;
+}
+
 .Station:hover:enabled {
 	background-color: rgba(33, 33, 33, 0.64);
 }
-
 
 .Station:focus {
 	outline: none;

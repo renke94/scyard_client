@@ -17,7 +17,7 @@ export default class Board extends React.Component<BoardProps, BoardState> {
             <div className={"Board"}>
                 <img className={"BoardBackground"} src="/board.png" alt=""/>
                 {coordinates.map((c, idx) =>
-                    Station(c[0], c[1], idx, this.props.onStationClicked, this.props.reachableStations.has(idx)))
+                    Station(c[0], c[1], c[2], idx, this.props.onStationClicked, this.props.reachableStations.has(idx)))
                 }
                 {this.props.children}
             </div>
@@ -25,14 +25,19 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     }
 }
 
-const Station = (left: number, top: number, idx: number, onClicked: (idx: number) => void, enabled: Boolean) => {
+const Station = (left: number, top: number, stationType: number, idx: number, onClicked: (idx: number) => void, enabled: Boolean) => {
     return <button
         disabled={!enabled}
-        className={"Station"}
+        className={getStationTypeClass(stationType)}
         onClick={() => onClicked(idx)}
         key={idx}
         style={{
             left : `${left * 100}%`,
             top  : `${top * 100}%`
         }}>{idx}</button>
+}
+
+const getStationTypeClass = (stationType: number) => {
+    const classes = ["", "StationBus", "StationTrain", "StationBusTrain"];
+    return "Station " + classes[stationType];
 }
