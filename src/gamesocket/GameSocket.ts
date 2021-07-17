@@ -218,12 +218,15 @@ export interface PlayerInfo {
 }
 
 export interface SelfInfo extends PlayerInfo {
-    reachableStations: {
-        TAXI  : Array<number>;
-        BUS   : Array<number>;
-        TRAIN : Array<number>;
-        BLACK : Array<number>;
-    };
+    reachableStations: ReachableStations;
+    isMisterX: Boolean;
+}
+
+export interface ReachableStations {
+    TAXI  : Array<number>;
+    BUS   : Array<number>;
+    TRAIN : Array<number>;
+    BLACK : Array<number>;
 }
 
 export interface GameInfo {

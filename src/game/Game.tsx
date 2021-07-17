@@ -6,14 +6,14 @@ import Figure from "../figure/Figure";
 import Move from "../move/Move";
 
 interface GameProps {
-    socket: GameSocket;
-    selfInfo: SelfInfo;
-    players: Map<string, PlayerInfo>;
+    socket   : GameSocket;
+    selfInfo : SelfInfo;
+    players  : Map<string, PlayerInfo>;
 }
 
 interface GameState {
-    showMoveDialog: Boolean;
-    targetStation: number;
+    showMoveDialog : Boolean;
+    targetStation  : number;
 }
 
 export default class Game extends React.Component<GameProps, GameState> {
@@ -69,10 +69,11 @@ export default class Game extends React.Component<GameProps, GameState> {
 
                     {this.props.selfInfo && <Figure playerInfo={this.props.selfInfo}/>}
                     {this.state.showMoveDialog && <MoveDialog
-                        targetStation={0}
+                        targetStation={this.state.targetStation}
+                        reachableStations={this.props.selfInfo.reachableStations}
                         onTicketSelected={this.onTicketSelected}
                         onClose={() => this.setState({showMoveDialog: false})}
-                        playerInfo={this.props.selfInfo}/>}
+                        selfInfo={this.props.selfInfo}/>}
                 </Board>
             </div>
         );

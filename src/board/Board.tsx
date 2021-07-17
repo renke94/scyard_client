@@ -16,8 +16,8 @@ export default class Board extends React.Component<BoardProps, BoardState> {
         return (
             <div className={"Board"}>
                 <img className={"BoardBackground"} src="/board.png" alt=""/>
-                {coordinates.map((c, idx) =>
-                    Station(c[0], c[1], c[2], idx, this.props.onStationClicked, this.props.reachableStations.has(idx)))
+                {coordinates.map((_, idx) =>
+                    Station(idx, this.props.onStationClicked, this.props.reachableStations.has(idx)))
                 }
                 {this.props.children}
             </div>
@@ -25,19 +25,23 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     }
 }
 
-const Station = (left: number, top: number, stationType: number, idx: number, onClicked: (idx: number) => void, enabled: Boolean) => {
+const Station = (idx: number, onClicked: (idx: number) => void, enabled: Boolean) => {
+    const c: number[] = coordinates[idx];
+    const left = c[0];
+    const top  = c[1];
+    const type = c[2];
+
     return <button
         disabled={!enabled}
-        className={getStationTypeClass(stationType)}
+        className={"Station"}
         onClick={() => onClicked(idx)}
         key={idx}
         style={{
             left : `${left * 100}%`,
-            top  : `${top * 100}%`
+            top  : `${top * 100}%`,
+            backgroundImage: `url("${classes[type]}")`,
         }}>{idx}</button>
 }
 
-const getStationTypeClass = (stationType: number) => {
-    const classes = ["", "StationBus", "StationTrain", "StationBusTrain"];
-    return "Station " + classes[stationType];
-}
+
+const classes = ["/StationTaxi.png", "/StationBus.png", "/StationTrainBus.png", "/StationTrainBus.png"];

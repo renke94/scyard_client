@@ -6,22 +6,24 @@
 	padding: 0;
 	color: white;
 	background-color: rgba(0, 0, 0, 0.64);
-	border: 1px inset;
+	/*border: 1px inset;*/
+	border: none;
 	user-select: none;
 	margin: 0;
 	transform: translate(-50%, -50%);
+	background-size: cover;
 }
 
 .StationBus {
-	-webkit-box-shadow: -3px -3px 3px #4EFF48;
+	/*-webkit-box-shadow: -3px -3px 3px #4EFF48;*/
 }
 
 .StationTrain {
-	-webkit-box-shadow: 2px 2px 3px #FF02A7
+	/*-webkit-box-shadow: 2px 2px 3px #FF02A7*/
 }
 
 .StationBusTrain {
-	-webkit-box-shadow: 2px 2px 3px #FF02A7, -3px -3px 3px #4EFF48;
+	/*-webkit-box-shadow: 2px 2px 3px #FF02A7, -3px -3px 3px #4EFF48;*/
 }
 
 .Station:hover:enabled {
@@ -38,8 +40,8 @@
 
 .Board {
 	position: absolute;
-	width:  70vw;
-	height: 50vw;
+	width:  1280px; /*70vw;*/
+	height:  950px; /*50vw;*/
 }
 
 .BoardBackground {
