@@ -2,13 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import Chat from "./chat/Chat";
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
     <React.StrictMode>
         <div>
-            <Chat/>
+            <App/>
         </div>
     </React.StrictMode>,
     document.getElementById('root')

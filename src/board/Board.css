@@ -40,8 +40,8 @@
 
 .Board {
 	position: absolute;
-	width:  1280px; /*70vw;*/
-	height:  950px; /*50vw;*/
+	width:  /*1280px;*/ 70vw;
+	height: /* 950px;*/ 50vw;
 }
 
 .BoardBackground {

@@ -13,6 +13,7 @@ export default class GameSocket {
     private gameReadyStateActions: Array<(e: GameReadyStateChangedEvent) => void> = [];
     private playerUpdateActions: Array<(e: PlayerUpdatedEvent) => void> = [];
     private selfUpdateActions: Array<(e: SelfUpdatedEvent) => void> = [];
+    private messageActions: Array<(e: PlayerMessageEvent) => void> = [];
 
     private playersUpdated = (data: any) => {
         const event = new PlayersUpdatedEvent(data);
@@ -44,6 +45,11 @@ export default class GameSocket {
         this.selfUpdateActions.forEach(action => action(event));
     }
 
+    private message = (data: any) => {
+        const event = new PlayerMessageEvent(data);
+        this.messageActions.forEach(action => action(event));
+    }
+
     /**
      * The eventMapper determines the type of the incoming event.
      */
@@ -54,6 +60,7 @@ export default class GameSocket {
         ["gameReadyStateChanged", this.gameReadyStateChanged],
         ["updatePlayer", this.updatePlayer],
         ["updateSelf", this.updateSelf],
+        ["messageEvent", this.message],
     ]);
 
     constructor(name: string) {
@@ -107,6 +114,10 @@ export default class GameSocket {
         this.selfUpdateActions.push(action);
     }
 
+    onMessage(action: (e: PlayerMessageEvent) => void) {
+        this.messageActions.push(action);
+    }
+
     /**
      * Commands:
      */
@@ -120,6 +131,15 @@ export default class GameSocket {
 
     sendMove = (move: Move) => {
         this.sendEvent(new MoveEvent(move));
+    }
+
+    sendMessage = (msg: string) => {
+        const messageEvent = new PlayerMessageEvent({
+            message: msg,
+            timestamp: new Date(),
+            sender: ""
+        });
+        this.sendEvent(messageEvent);
     }
 
     disconnect = () => {
@@ -200,6 +220,19 @@ export class SelfUpdatedEvent extends Event {
         super("updateSelf");
         this.selfInfo = jsonObject.selfInfo;
         console.log(this.selfInfo);
+    }
+}
+
+export class PlayerMessageEvent extends Event {
+    message: string;
+    timestamp: number;
+    sender: string;
+
+    constructor(jsonObject: any) {
+        super("messageEvent");
+        this.message = jsonObject.message;
+        this.timestamp = jsonObject.timestamp;
+        this.sender = jsonObject.sender;
     }
 }
 

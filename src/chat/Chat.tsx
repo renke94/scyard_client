@@ -1,8 +1,10 @@
 import React, {FormEvent} from "react";
 import "./Chat.css"
+import {PlayerMessageEvent} from "../gamesocket/GameSocket";
 
 interface ChatProps {
-
+    messages: Array<PlayerMessageEvent>;
+    onMessageSend: (msg: string) => void;
 }
 
 export default class Chat extends React.Component<ChatProps, any> {
@@ -12,7 +14,6 @@ export default class Chat extends React.Component<ChatProps, any> {
         super(props);
 
         this.state = {
-            messages: ["Henlo", "Fren"],
             input: "",
         }
     }
@@ -20,13 +21,8 @@ export default class Chat extends React.Component<ChatProps, any> {
     onMessage = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (this.state.input === "") return;
-        const messages = this.state.messages.slice();
-        messages.push(this.state.input);
-
-        this.setState({
-            input: "",
-            messages: messages
-        });
+        this.props.onMessageSend(this.state.input);
+        this.setState({input: ""});
     }
 
     scrollToBottom = () => {
@@ -42,9 +38,9 @@ export default class Chat extends React.Component<ChatProps, any> {
     }
 
     render() {
-        return <div className={"Chat"} style={{backgroundImage: 'url("/board.png")'}}>
+        return <div className={"Chat"}>
             <div className={"Messages"}>
-                {this.state.messages.map((msg: string) => <p className={"Message"}>{msg}</p>)}
+                {this.props.messages.map((e: PlayerMessageEvent, idx: number) => <Message e={e} key={idx}/>)}
                 <div ref={this.messagesEnd}/>
             </div>
             <form
@@ -62,3 +58,19 @@ export default class Chat extends React.Component<ChatProps, any> {
         </div>;
     }
 }
+
+interface MessageProps {
+    e: PlayerMessageEvent;
+}
+
+function Message(props: MessageProps) {
+    const date = new Date(props.e.timestamp).toLocaleString().split(',')[1].trim();
+
+    return <div className={"Message"}>
+        <p className={"MessageTime"}>[{date}]</p>
+        <p className={"MessageSender"}><i>{props.e.sender}:</i></p>
+        <p className={"MessageBody"}>{props.e.message}</p>
+    </div>
+}
+
+

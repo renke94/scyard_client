@@ -22,8 +22,8 @@ export default class MoveDialog extends React.Component<MoveDialogProps, any> {
         const reachableStations = this.props.reachableStations;
         const targetStation = this.props.targetStation;
 
-        const taxiDisabled  = selfInfo.tickets.TAXI  <= 0 || !reachableStations.TAXI.find((i) => i === targetStation);
-        const busDisabled   = selfInfo.tickets.BUS   <= 0 || !reachableStations.BUS.find((i) => i === targetStation);
+        const taxiDisabled  = selfInfo.tickets.TAXI  <= 0 || !reachableStations.TAXI.find((i)  => i === targetStation);
+        const busDisabled   = selfInfo.tickets.BUS   <= 0 || !reachableStations.BUS.find((i)   => i === targetStation);
         const trainDisabled = selfInfo.tickets.TRAIN <= 0 || !reachableStations.TRAIN.find((i) => i === targetStation);
         const blackDisabled = selfInfo.tickets.BLACK <= 0 || !reachableStations.BLACK.find((i) => i === targetStation);
 
