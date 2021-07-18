@@ -14,6 +14,7 @@ export default class GameSocket {
     private playerUpdateActions: Array<(e: PlayerUpdatedEvent) => void> = [];
     private selfUpdateActions: Array<(e: SelfUpdatedEvent) => void> = [];
     private messageActions: Array<(e: PlayerMessageEvent) => void> = [];
+    private illegalMoveActions: Array<(e: IllegalMoveEvent) => void> = [];
 
     private playersUpdated = (data: any) => {
         const event = new PlayersUpdatedEvent(data);
@@ -50,6 +51,11 @@ export default class GameSocket {
         this.messageActions.forEach(action => action(event));
     }
 
+    private illegalMove = (data: any) => {
+        const event = new IllegalMoveEvent(data);
+        this.illegalMoveActions.forEach(action => action(event))
+    }
+
     /**
      * The eventMapper determines the type of the incoming event.
      */
@@ -61,6 +67,7 @@ export default class GameSocket {
         ["updatePlayer", this.updatePlayer],
         ["updateSelf", this.updateSelf],
         ["messageEvent", this.message],
+        ["illegalMove", this.illegalMove],
     ]);
 
     constructor(name: string) {
@@ -116,6 +123,10 @@ export default class GameSocket {
 
     onMessage(action: (e: PlayerMessageEvent) => void) {
         this.messageActions.push(action);
+    }
+
+    onIllegalMove(action: (e: IllegalMoveEvent) => void) {
+        this.illegalMoveActions.push(action);
     }
 
     /**
@@ -233,6 +244,15 @@ export class PlayerMessageEvent extends Event {
         this.message = jsonObject.message;
         this.timestamp = jsonObject.timestamp;
         this.sender = jsonObject.sender;
+    }
+}
+
+class IllegalMoveEvent extends Event {
+    msg: string
+
+    constructor(data: any) {
+        super("illegalMove");
+        this.msg = data.msg;
     }
 }
 
