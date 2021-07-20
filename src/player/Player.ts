@@ -1,9 +1,5 @@
-export default class Player {
-    name: string;
-    uuid: string;
-
-    constructor(name: string, uuid: string) {
-        this.name = name;
-        this.uuid = uuid;
-    }
+export default interface Player {
+    name : string;
+    uuid : string;
+    color: string;
 }

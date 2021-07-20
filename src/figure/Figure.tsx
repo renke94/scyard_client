@@ -15,7 +15,7 @@ const colors = new Map<string, string>([
 ]);
 
 interface FigureProps {
-    playerInfo    : PlayerInfo;
+    playerInfo : PlayerInfo;
 }
 
 interface FigureState {
@@ -41,20 +41,24 @@ export default class Figure extends React.Component<FigureProps, FigureState> {
                     }}
                 >
 	                <div className={"PlayerInfo"}>
-		                <div className={"FigurePlayerName"}>{this.props.playerInfo.player.name}</div>
+		                <div className={"FigurePlayerName"}>{this.props.playerInfo.name}</div>
 		                <div className={"FigurePlayerTickets"}>
                             <div>
-                                <p className={"FigurePlayerTicketsAmount"}>{this.props.playerInfo.tickets.TAXI}</p>
+                                <p className={"FigurePlayerTicketsAmount"}>{this.props.playerInfo.tickets.taxi}</p>
                                 <img src="/ticket_taxi.png"  alt="" width={50}/>
                             </div>
                             <div>
-                                <p className={"FigurePlayerTicketsAmount"}>{this.props.playerInfo.tickets.BUS}</p>
+                                <p className={"FigurePlayerTicketsAmount"}>{this.props.playerInfo.tickets.bus}</p>
                                 <img src="/ticket_bus.png"   alt="" width={50}/>
                             </div>
                             <div>
-                                <p className={"FigurePlayerTicketsAmount"}>{this.props.playerInfo.tickets.BLACK}</p>
+                                <p className={"FigurePlayerTicketsAmount"}>{this.props.playerInfo.tickets.train}</p>
                                 <img src="/ticket_train.png" alt="" width={50}/>
                             </div>
+                            {this.props.playerInfo.isMisterX && <div>
+	                            <p className={"FigurePlayerTicketsAmount"}>{this.props.playerInfo.tickets.black}</p>
+	                            <img src="/ticket_black.png" alt="" width={50}/>
+                            </div>}
 		                </div>
 	                </div>
                 </div>}

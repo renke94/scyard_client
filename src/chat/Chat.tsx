@@ -1,27 +1,39 @@
 import React, {FormEvent} from "react";
 import "./Chat.css"
-import {PlayerMessageEvent} from "../gamesocket/GameSocket";
+import GameSocket, {PlayerMessageEvent} from "../gamesocket/GameSocket";
 
 interface ChatProps {
-    messages: Array<PlayerMessageEvent>;
-    onMessageSend: (msg: string) => void;
+    socket: GameSocket;
 }
 
-export default class Chat extends React.Component<ChatProps, any> {
+interface ChatState {
+    messages : Array<PlayerMessageEvent>;
+    input    : string;
+}
+
+export default class Chat extends React.Component<ChatProps, ChatState> {
     messagesEnd = React.createRef<HTMLDivElement>();
 
     constructor(props: ChatProps) {
         super(props);
 
         this.state = {
-            input: "",
+            messages : [],
+            input    : "",
         }
+
+
+        this.props.socket.onMessage((e: PlayerMessageEvent) => {
+            const messages = this.state.messages;
+            messages.push(e);
+            this.setState({messages: messages});
+        })
     }
 
     onMessage = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (this.state.input === "") return;
-        this.props.onMessageSend(this.state.input);
+        this.props.socket.sendMessage(this.state.input);
         this.setState({input: ""});
     }
 
@@ -40,7 +52,7 @@ export default class Chat extends React.Component<ChatProps, any> {
     render() {
         return <div className={"Chat"}>
             <div className={"Messages"}>
-                {this.props.messages.map((e: PlayerMessageEvent, idx: number) => <Message e={e} key={idx}/>)}
+                {this.state.messages.map((e: PlayerMessageEvent, idx: number) => <Message e={e} key={idx}/>)}
                 <div ref={this.messagesEnd}/>
             </div>
             <form
@@ -64,11 +76,11 @@ interface MessageProps {
 }
 
 function Message(props: MessageProps) {
-    const date = new Date(props.e.timestamp).toLocaleString().split(',')[1].trim();
+    const date = new Date(props.e.data.date).toLocaleString().split(',')[1].trim();
 
     return <div className={"Message"}>
         <p className={"MessageTime"}>[{date}]</p>
-        <p className={"MessageSender"}><i>{props.e.sender}:</i></p>
+        <p className={"MessageSender"}><i>{props.e.data.sender}:</i></p>
         <p className={"MessageBody"}>{props.e.message}</p>
     </div>
 }

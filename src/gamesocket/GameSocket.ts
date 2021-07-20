@@ -7,80 +7,108 @@ export default class GameSocket {
     /**
      * Actions to be executed on a corresponding event are stored here.
      */
-    private playersUpdatedActions: Array<(e: PlayersUpdatedEvent) => void> = [];
-    private youAreHostActions: Array<(e: YouAreHostEvent) => void> = [];
-    private gameStartedActions: Array<(e: GameStartedEvent) => void> = [];
-    private gameReadyStateActions: Array<(e: GameReadyStateChangedEvent) => void> = [];
-    private playerUpdateActions: Array<(e: PlayerUpdatedEvent) => void> = [];
-    private selfUpdateActions: Array<(e: SelfUpdatedEvent) => void> = [];
-    private messageActions: Array<(e: PlayerMessageEvent) => void> = [];
-    private illegalMoveActions: Array<(e: IllegalMoveEvent) => void> = [];
+    private playersUpdatedActions   : Array<(e: UpdatePlayersEvent)         => void> = [];
+    private youAreHostActions       : Array<(e: YouAreHostEvent)            => void> = [];
+    private gameStartedActions      : Array<(e: GameStartedEvent)           => void> = [];
+    private gameReadyStateActions   : Array<(e: GameReadyStateChangedEvent) => void> = [];
+    private playerUpdateActions     : Array<(e: UpdatePlayerInfoEvent)      => void> = [];
+    private selfUpdateActions       : Array<(e: UpdateSelfInfoEvent)        => void> = [];
+    private messageActions          : Array<(e: PlayerMessageEvent)         => void> = [];
+    private illegalMoveActions      : Array<(e: IllegalMoveEvent)           => void> = [];
+    private nextRoundActions        : Array<(e: NextRoundEvent)             => void> = [];
+    private yourTurnActions         : Array<(e: YourTurnEvent)              => void> = [];
+    private misterXMovedActions     : Array<(e: MisterXMovedEvent)          => void> = [];
+    private misterXWasSeenActions   : Array<(e: MisterXWasSeenEvent)        => void> = [];
+    private misterXWasCaughtActions : Array<(e: MisterXWasCaughtEvent)      => void> = [];
+    private misterXEscapedActions   : Array<(e: MisterXEscapedEvent)        => void> = [];
 
     private playersUpdated = (data: any) => {
-        const event = new PlayersUpdatedEvent(data);
-        this.playersUpdatedActions.forEach(action => action(event));
+        this.playersUpdatedActions.forEach(action => action(data));
     }
 
     private hostChanged = (data: any) => {
-        const event = new YouAreHostEvent(data);
-        this.youAreHostActions.forEach(action => action(event));
+        this.youAreHostActions.forEach(action => action(data));
     }
 
     private gameStarted = (data: any) => {
-        const event = new GameStartedEvent(data);
-        this.gameStartedActions.forEach(action => action(event));
+        this.gameStartedActions.forEach(action => action(data));
     }
 
     private gameReadyStateChanged = (data: any) => {
-        const event = new GameReadyStateChangedEvent(data);
-        this.gameReadyStateActions.forEach(action => action(event));
+        this.gameReadyStateActions.forEach(action => action(data));
     }
 
     private updatePlayer = (data: any) => {
-        const event = new PlayerUpdatedEvent(data);
-        this.playerUpdateActions.forEach(action => action(event));
+        this.playerUpdateActions.forEach(action => action(data));
     }
 
     private updateSelf = (data: any) => {
-        const event = new SelfUpdatedEvent(data);
-        this.selfUpdateActions.forEach(action => action(event));
+        this.selfUpdateActions.forEach(action => action(data));
     }
 
     private message = (data: any) => {
-        const event = new PlayerMessageEvent(data);
-        this.messageActions.forEach(action => action(event));
+        this.messageActions.forEach(action => action(data));
     }
 
     private illegalMove = (data: any) => {
-        const event = new IllegalMoveEvent(data);
-        this.illegalMoveActions.forEach(action => action(event))
+        this.illegalMoveActions.forEach(action => action(data))
+    }
+
+    private nextRound = (data: any) => {
+        this.nextRoundActions.forEach(action => action(data))
+    }
+
+    private yourTurn = (data: any) => {
+        this.yourTurnActions.forEach(action => action(data))
+    }
+
+    private misterXMoved = (data: any) => {
+        this.misterXMovedActions.forEach(action => action(data))
+    }
+
+    private misterXWasSeen = (data: any) => {
+        this.misterXWasSeenActions.forEach(action => action(data))
+    }
+
+    private misterXWasCaught = (data: any) => {
+        this.misterXWasCaughtActions.forEach(action => action(data))
+    }
+
+    private misterXEscaped = (data: any) => {
+        this.misterXEscapedActions.forEach(action => action(data))
     }
 
     /**
      * The eventMapper determines the type of the incoming event.
      */
     private eventMapper = new Map([
-        ["playersUpdate", this.playersUpdated],
-        ["youAreHost", this.hostChanged],
-        ["gameStarted", this.gameStarted],
-        ["gameReadyStateChanged", this.gameReadyStateChanged],
-        ["updatePlayer", this.updatePlayer],
-        ["updateSelf", this.updateSelf],
-        ["messageEvent", this.message],
-        ["illegalMove", this.illegalMove],
+        ["YouAreHostEvent", this.hostChanged],
+        ["UpdatePlayersEvent", this.playersUpdated],
+        ["GameReadyStateChangedEvent", this.gameReadyStateChanged],
+        ["GameStartedEvent", this.gameStarted],
+        ["UpdatePlayerInfoEvent", this.updatePlayer],
+        ["UpdateSelfInfoEvent", this.updateSelf],
+        ["MessageEvent", this.message],
+        ["IllegalMoveEvent", this.illegalMove],
+        ["NextRoundEvent", this.nextRound],
+        ["YourTurnEvent", this.yourTurn],
+        ["MisterXMovedEvent", this.misterXMoved],
+        ["MisterXWasSeenEvent", this.misterXWasSeen],
+        ["MisterXWasCaughtEvent", this.misterXWasCaught],
+        ["MisterXEscapedEvent", this.misterXEscaped],
     ]);
 
     constructor(name: string) {
         this.socket = new WebSocket(`ws://localhost:7000/${name}`);
         this.socket.onmessage = (e: MessageEvent) => {
-            const data = JSON.parse(e.data);
-            const action = this.eventMapper.get(data.type);
+            const json = JSON.parse(e.data);
+            const action = this.eventMapper.get(json.type);
             if (action === undefined) {
-                console.log(`event: ${data.type} not implemented`);
+                console.log(`event: ${json.type} not implemented`);
                 return;
             }
 
-            action!(data);
+            action!(json);
         }
     }
 
@@ -89,7 +117,7 @@ export default class GameSocket {
      * To register an action to a corresponding event, call on of this methods with a callback.
      * @param action: callback function, that will be executed, when the corresponding event is fired.
      */
-    onPlayersUpdated(action: (e: PlayersUpdatedEvent) => void) {
+    onPlayersUpdated(action: (e: UpdatePlayersEvent) => void) {
         this.playersUpdatedActions.push(action);
     }
 
@@ -113,11 +141,11 @@ export default class GameSocket {
         this.gameReadyStateActions.push(action);
     }
 
-    onPlayerUpdated(action: (e: PlayerUpdatedEvent) => void) {
+    onPlayerUpdated(action: (e: UpdatePlayerInfoEvent) => void) {
         this.playerUpdateActions.push(action);
     }
 
-    onSelfUpdated(action: (e: SelfUpdatedEvent) => void) {
+    onSelfUpdated(action: (e: UpdateSelfInfoEvent) => void) {
         this.selfUpdateActions.push(action);
     }
 
@@ -129,28 +157,73 @@ export default class GameSocket {
         this.illegalMoveActions.push(action);
     }
 
+    onNextRound(action: (e: NextRoundEvent) => void) {
+        this.nextRoundActions.push(action);
+    }
+
+    onYourTurn(action: (e: YourTurnEvent) => void) {
+        this.yourTurnActions.push(action);
+    }
+
+    onMisterXMoved(action: (e: MisterXMovedEvent) => void) {
+        this.misterXMovedActions.push(action);
+    }
+
+    onMisterXWasSeen(action: (e: MisterXWasSeenEvent) => void) {
+        this.misterXWasSeenActions.push(action);
+    }
+
+    onMisterXWasCaught(action: (e: MisterXWasCaughtEvent) => void) {
+        this.misterXWasCaughtActions.push(action);
+    }
+
+    onMisterXEscaped(action: (e: MisterXEscapedEvent) => void) {
+        this.misterXEscapedActions.push(action);
+    }
+
+
     /**
      * Commands:
      */
-    private sendEvent = (event: Event) => {
+    private sendEvent = (event: ScyEvent) => {
         this.socket.send(JSON.stringify(event));
     }
 
     startGame = () => {
-        this.sendEvent(new StartGameEvent());
+        this.sendEvent({
+            type    : "StartGameEvent",
+            message : ""
+        });
+    }
+
+    clientReady = () => {
+        this.sendEvent({
+            type    : "ClientReadyEvent",
+            message : ""
+        })
     }
 
     sendMove = (move: Move) => {
-        this.sendEvent(new MoveEvent(move));
+        const event : MoveEvent = {
+            type    : "MoveEvent",
+            message : "",
+            data    : move
+        };
+
+        this.sendEvent(event);
     }
 
     sendMessage = (msg: string) => {
-        const messageEvent = new PlayerMessageEvent({
-            message: msg,
-            timestamp: new Date(),
-            sender: ""
-        });
-        this.sendEvent(messageEvent);
+        const event : PlayerMessageEvent = {
+            type    : "MessageEvent",
+            message : msg,
+            data    : {
+                text   : msg,
+                sender : "",
+                date   : new Date(),
+            }
+        };
+        this.sendEvent(event);
     }
 
     disconnect = () => {
@@ -158,132 +231,91 @@ export default class GameSocket {
     }
 }
 
-export class Event {
-    type: string;
-
-    constructor(type: string) {
-        this.type = type;
-        console.log(this.type);
-    }
+export interface ScyEvent {
+    type    : string;
+    message : string;
 }
 
-export class PlayersUpdatedEvent extends Event {
-    players: Array<Player>;
-
-    constructor(jsonObject: any) {
-        super(jsonObject.type);
-        this.players = jsonObject.players.map((p: any) => new Player(p.name, p.uuid));
-    }
+export interface UpdatePlayersEvent extends ScyEvent {
+    data: Array<Player>;
 }
 
-export class YouAreHostEvent extends Event {
-    constructor(jsonObject: any) {
-        super(jsonObject.type);
-    }
+export interface YouAreHostEvent extends ScyEvent {}
+
+interface StartGameEvent extends ScyEvent {}
+
+export interface GameStartedEvent extends ScyEvent {}
+
+export interface ClientReadyEvent extends ScyEvent {}
+
+export interface GameReadyStateChangedEvent extends ScyEvent {
+    data : Boolean;
 }
 
-class StartGameEvent extends Event {
-    constructor() {
-        super("hostStartedTheGame");
-    }
+interface MoveEvent extends ScyEvent {
+    data : Move;
 }
 
-class MoveEvent extends Event {
-    move: Move;
-
-    constructor(move: Move) {
-        super("moveEvent");
-        this.move = move;
-    }
+export interface UpdatePlayerInfoEvent extends ScyEvent {
+    data : Map<string, PlayerInfo>;
 }
 
-export class GameReadyStateChangedEvent extends Event {
-    isReady: Boolean;
-
-    constructor(jsonObject: any) {
-        super("gameReadyStateChanged");
-        this.isReady = jsonObject.isReady;
-    }
+export interface UpdateSelfInfoEvent extends ScyEvent {
+    data : PlayerInfo;
 }
 
-export class GameStartedEvent extends Event {
-    gameInfo : GameInfo;
-
-    constructor(jsonObject: any) {
-        super("gameStarted");
-        this.gameInfo = jsonObject.gameInfo;
-    }
+export interface PlayerMessageEvent extends ScyEvent {
+    data : Message;
 }
 
-export class PlayerUpdatedEvent extends Event {
-    playerInfo : PlayerInfo;
-
-    constructor(jsonObject: any) {
-        super("updatePlayer");
-        this.playerInfo = jsonObject.playerInfo;
-    }
+interface IllegalMoveEvent extends ScyEvent {
+    data : Move;
 }
 
-export class SelfUpdatedEvent extends Event {
-    selfInfo : SelfInfo;
-
-    constructor(jsonObject: any) {
-        super("updateSelf");
-        this.selfInfo = jsonObject.selfInfo;
-        console.log(this.selfInfo);
-    }
+interface NextRoundEvent extends ScyEvent {
+    data : number;
 }
 
-export class PlayerMessageEvent extends Event {
-    message: string;
-    timestamp: number;
-    sender: string;
+interface YourTurnEvent extends ScyEvent {}
 
-    constructor(jsonObject: any) {
-        super("messageEvent");
-        this.message = jsonObject.message;
-        this.timestamp = jsonObject.timestamp;
-        this.sender = jsonObject.sender;
-    }
+interface MisterXMovedEvent extends ScyEvent {}
+
+interface MisterXWasSeenEvent extends ScyEvent {
+    data : PlayerInfo;
 }
 
-class IllegalMoveEvent extends Event {
-    msg: string
+interface MisterXWasCaughtEvent extends ScyEvent {
+    data: PlayerInfo;
+}
 
-    constructor(data: any) {
-        super("illegalMove");
-        this.msg = data.msg;
-    }
+interface MisterXEscapedEvent extends ScyEvent {}
+
+interface Message {
+    text   : string;
+    sender : string;
+    date   : Date;
 }
 
 export interface Tickets {
-    TAXI  : number;
-    BUS   : number;
-    TRAIN : number;
-    BLACK : number;
+    taxi  : number;
+    bus   : number;
+    train : number;
+    black : number;
 }
 
 export interface PlayerInfo {
-    player  : Player;
-    tickets : Tickets;
-    station : number;
-    color   : string;
-}
-
-export interface SelfInfo extends PlayerInfo {
-    reachableStations: ReachableStations;
-    isMisterX: Boolean;
+    uuid              : string;
+    name              : string;
+    color             : string;
+    station           : number;
+    tickets           : Tickets;
+    isMisterX         : Boolean;
+    reachableStations : ReachableStations;
 }
 
 export interface ReachableStations {
-    TAXI  : Array<number>;
-    BUS   : Array<number>;
-    TRAIN : Array<number>;
-    BLACK : Array<number>;
-}
-
-export interface GameInfo {
-    detectives: Array<PlayerInfo>;
-    misterX: Player;
-    misterXLastSeen: string;
+    taxi  : Array<number>;
+    bus   : Array<number>;
+    train : Array<number>;
+    black : Array<number>;
 }
