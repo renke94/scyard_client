@@ -1,12 +1,20 @@
 import React from "react";
 import Board from "../board/Board";
 import MoveDialog from "../move/MoveDialog";
-import GameSocket, {PlayerInfo, Tickets, UpdatePlayerInfoEvent, UpdateSelfInfoEvent} from "../gamesocket/GameSocket";
-import Figure from "../figure/Figure";
+import GameSocket, {
+    Message, MisterXWasCaughtEvent,
+    MisterXWasSeenEvent,
+    PlayerInfo,
+    Tickets,
+    UpdatePlayerInfoEvent,
+    UpdateSelfInfoEvent
+} from "../gamesocket/GameSocket";
+import Figure, {MisterX} from "../figure/Figure";
 import Move from "../move/Move";
 
 interface GameProps {
-    socket : GameSocket;
+    socket    : GameSocket;
+    onMessage : (msg: Message) => void;
 }
 
 interface GameState {
@@ -14,6 +22,7 @@ interface GameState {
     players        : Map<string, PlayerInfo>;
     showMoveDialog : Boolean;
     targetStation  : number;
+    misterXInfo    : PlayerInfo | undefined;
 }
 
 export default class Game extends React.Component<GameProps, GameState> {
@@ -25,6 +34,7 @@ export default class Game extends React.Component<GameProps, GameState> {
             players        : new Map<string, PlayerInfo>(),
             showMoveDialog : false,
             targetStation  : 0,
+            misterXInfo    : undefined,
         }
 
         this.socketEvents(this.props.socket)
@@ -36,11 +46,32 @@ export default class Game extends React.Component<GameProps, GameState> {
 
     socketEvents = (socket: GameSocket) => {
         socket.onPlayerUpdated((e: UpdatePlayerInfoEvent) => {
-            this.setState({players: e.data});
+            const players = this.state.players;
+            e.data.forEach((info: PlayerInfo) => {
+                players.set(info.uuid, info)
+            })
+            this.setState({players: players});
         });
 
         socket.onSelfUpdated((e: UpdateSelfInfoEvent) => {
             this.setState({selfInfo: e.data});
+        });
+
+        socket.onMisterXWasSeen((e: MisterXWasSeenEvent) => {
+            this.props.onMessage({
+                text   : e.message,
+                sender : "Server",
+                date   : new Date(),
+            });
+            this.setState({misterXInfo: e.data});
+        });
+
+        socket.onMisterXWasCaught((e: MisterXWasCaughtEvent) => {
+            this.props.onMessage({
+                text   : e.message,
+                sender : "Server",
+                date   : new Date(),
+            });
         });
     }
 
@@ -85,6 +116,8 @@ export default class Game extends React.Component<GameProps, GameState> {
                     {Array.from(this.state.players).map((e, idx) =>
                         <Figure playerInfo={e[1]} key={idx}/>
                     )}
+
+                    {this.state.misterXInfo && <MisterX playerInfo={this.state.misterXInfo}/>}
 
                     {/*{this.state.selfInfo && <Figure playerInfo={this.state.selfInfo}/>}*/}
                     {this.state.showMoveDialog && this.state.selfInfo && <MoveDialog

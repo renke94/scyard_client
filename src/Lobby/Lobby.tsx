@@ -4,7 +4,7 @@ import Player from "../player/Player";
 import GameSocket, {
     GameReadyStateChangedEvent,
     GameStartedEvent,
-    PlayerMessageEvent,
+    Message, PlayerMessageEvent,
     UpdatePlayersEvent,
     YouAreHostEvent
 } from "../gamesocket/GameSocket";
@@ -21,7 +21,7 @@ interface LobbyState {
     host: Boolean;
     isReady: Boolean;
     gameStarted: Boolean
-    messages: Array<PlayerMessageEvent>;
+    messages: Array<Message>;
 }
 
 export default class Lobby extends React.Component<LobbyProps, LobbyState> {
@@ -57,6 +57,14 @@ export default class Lobby extends React.Component<LobbyProps, LobbyState> {
         socket.onGameStarted((e: GameStartedEvent) => {
             this.setState({gameStarted: true});
         })
+
+        socket.onMessage((e: PlayerMessageEvent) => this.onMessage(e.data))
+    }
+
+    onMessage = (msg: Message) => {
+        const messages = this.state.messages;
+        messages.push(msg);
+        this.setState({messages: messages});
     }
 
     render() {
@@ -64,6 +72,7 @@ export default class Lobby extends React.Component<LobbyProps, LobbyState> {
             {this.state.gameStarted ?
                 <Game
                     socket={this.props.socket}
+                    onMessage={this.onMessage}
                 /> :
                 <div className={"Lobby"}>
                     <h1>Lobby</h1>
@@ -77,7 +86,7 @@ export default class Lobby extends React.Component<LobbyProps, LobbyState> {
                     >Spiel starten</button>
                     <button onClick={this.props.onLogout}>Logout</button>
                 </div>}
-            <Chat socket={this.props.socket}/>
+            <Chat messages={this.state.messages} onMessage={this.onMessage}/>
         </div>;
     }
 }

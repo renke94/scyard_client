@@ -12,6 +12,7 @@
 	margin: 0;
 	transform: translate(-50%, -50%);
 	background-size: cover;
+	z-index: 2;
 }
 
 .StationBus {
@@ -42,6 +43,7 @@
 	position: absolute;
 	width:  /*1280px;*/ 70vw;
 	height: /* 950px;*/ 50vw;
+	z-index: 0;
 }
 
 .BoardBackground {

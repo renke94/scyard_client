@@ -74,3 +74,19 @@ export default class Figure extends React.Component<FigureProps, FigureState> {
         );
     }
 }
+
+interface MisterXProps {
+    playerInfo : PlayerInfo;
+}
+
+export function MisterX(props: MisterXProps) {
+    return <img
+        className={"Figure MisterX"}
+        src={colors.get(props.playerInfo.color)}
+        alt=""
+        style={{
+            left: `${coordinates[props.playerInfo.station][0] * 100}%`,
+            top : `${coordinates[props.playerInfo.station][1] * 100}%`
+        }}
+    />
+}

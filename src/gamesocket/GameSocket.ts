@@ -242,8 +242,6 @@ export interface UpdatePlayersEvent extends ScyEvent {
 
 export interface YouAreHostEvent extends ScyEvent {}
 
-interface StartGameEvent extends ScyEvent {}
-
 export interface GameStartedEvent extends ScyEvent {}
 
 export interface ClientReadyEvent extends ScyEvent {}
@@ -257,7 +255,7 @@ interface MoveEvent extends ScyEvent {
 }
 
 export interface UpdatePlayerInfoEvent extends ScyEvent {
-    data : Map<string, PlayerInfo>;
+    data : Array<PlayerInfo>;
 }
 
 export interface UpdateSelfInfoEvent extends ScyEvent {
@@ -268,29 +266,29 @@ export interface PlayerMessageEvent extends ScyEvent {
     data : Message;
 }
 
-interface IllegalMoveEvent extends ScyEvent {
+export interface IllegalMoveEvent extends ScyEvent {
     data : Move;
 }
 
-interface NextRoundEvent extends ScyEvent {
+export interface NextRoundEvent extends ScyEvent {
     data : number;
 }
 
-interface YourTurnEvent extends ScyEvent {}
+export interface YourTurnEvent extends ScyEvent {}
 
-interface MisterXMovedEvent extends ScyEvent {}
+export interface MisterXMovedEvent extends ScyEvent {}
 
-interface MisterXWasSeenEvent extends ScyEvent {
+export interface MisterXWasSeenEvent extends ScyEvent {
     data : PlayerInfo;
 }
 
-interface MisterXWasCaughtEvent extends ScyEvent {
+export interface MisterXWasCaughtEvent extends ScyEvent {
     data: PlayerInfo;
 }
 
-interface MisterXEscapedEvent extends ScyEvent {}
+export interface MisterXEscapedEvent extends ScyEvent {}
 
-interface Message {
+export interface Message {
     text   : string;
     sender : string;
     date   : Date;

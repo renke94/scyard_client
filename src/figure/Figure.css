@@ -7,6 +7,12 @@
 	z-index: 3;
 }
 
+.MisterX {
+	z-index: 1 !important;
+	opacity: 0.8;
+	filter: alpha(opacity=60);
+}
+
 .PlayerInfo {
 	background-color: rgba(20, 21, 24, 0.9);
 	width: 180px;
