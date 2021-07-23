@@ -86,7 +86,9 @@ export default class Lobby extends React.Component<LobbyProps, LobbyState> {
                     >Spiel starten</button>
                     <button onClick={this.props.onLogout}>Logout</button>
                 </div>}
-            <Chat messages={this.state.messages} onMessage={this.onMessage}/>
+            <Chat messages={this.state.messages} onMessage={((msg: string) => {
+                this.props.socket.sendMessage(msg);
+            })}/>
         </div>;
     }
 }

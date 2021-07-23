@@ -1,6 +1,8 @@
 import Player from "../player/Player";
 import Move from "../move/Move";
 
+const url = `ws://${document.location.hostname}:7000`;
+
 export default class GameSocket {
     private socket: WebSocket;
 
@@ -99,7 +101,8 @@ export default class GameSocket {
     ]);
 
     constructor(name: string) {
-        this.socket = new WebSocket(`ws://localhost:7000/${name}`);
+        console.log(url);
+        this.socket = new WebSocket(`${url}/${name}`);
         this.socket.onmessage = (e: MessageEvent) => {
             const json = JSON.parse(e.data);
             const action = this.eventMapper.get(json.type);

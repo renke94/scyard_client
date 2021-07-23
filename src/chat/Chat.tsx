@@ -4,7 +4,7 @@ import {Message} from "../gamesocket/GameSocket";
 
 interface ChatProps {
     messages  : Array<Message>;
-    onMessage : (msg: Message) => void;
+    onMessage : (msg: string) => void;
 }
 
 interface ChatState {
@@ -25,11 +25,8 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     onMessage = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (this.state.input === "") return;
-        this.props.onMessage({
-            text   : this.state.input,
-            sender : "",
-            date   : new Date()
-        })
+        this.props.onMessage(this.state.input);
+        this.setState({input: ""});
     }
 
     scrollToBottom = () => {
